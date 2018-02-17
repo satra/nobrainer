@@ -2,23 +2,28 @@ FROM nvidia/cuda:9.0-cudnn7-runtime-ubuntu16.04
 
 RUN apt-get update -qq \
     && apt-get install -yq --no-install-recommends \
+          ca-certificates \
+          curl \
+      	  libgomp1 \
           python3 \
-          python3-pip \
-          python3-setuptools \
-          python3-wheel \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
-    && useradd --no-user-group --create-home --shell /bin/bash neuro
+    && ln -sfv /usr/bin/python3 /usr/bin/python
 
-USER neuro
+RUN curl -fSsL -O https://bootstrap.pypa.io/get-pip.py \
+    && python get-pip.py \
+    && rm get-pip.py
 
-COPY . /opt/nobrainer/
-RUN pip3 install --upgrade --user --no-cache-dir \
-          pip==9.0.1 \
-    && pip3 install --user --no-cache-dir -r \
-          /opt/nobrainer/requirements.txt
+RUN pip install --upgrade --no-cache-dir \
+      nibabel==2.2.1 \
+      notebook \
+      numpy==1.14.0 \
+      https://dl.dropbox.com/s/rgl2gz3o2cqfvck/tensorflow-1.6.0rc1-cp35-cp35m-linux_x86_64.whl
 
 ENV LD_LIBRARY_PATH /usr/local/cuda/extras/CUPTI/lib64:$LD_LIBRARY_PATH
 
-# Expose port for TensorBoard.
+# Expose ports for TensorBoard and Jupyter notebook.
 EXPOSE 6006
+EXPOSE 8888
+
+ENTRYPOINT ["python"]
