@@ -14,11 +14,13 @@ RUN curl -fSsL -O https://bootstrap.pypa.io/get-pip.py \
     && python get-pip.py \
     && rm get-pip.py
 
-RUN pip install --upgrade --no-cache-dir \
+RUN pip install --no-cache-dir \
       nibabel==2.2.1 \
       notebook \
       numpy==1.14.0 \
-      https://dl.dropbox.com/s/rgl2gz3o2cqfvck/tensorflow-1.6.0rc1-cp35-cp35m-linux_x86_64.whl
+      # TensorFlow built from source with optimizations for OpenMind and GPU
+      # support. CPU: Intel(R) Xeon(R) CPU E5-2660 v2 @ 2.20GHz.
+      https://dl.dropbox.com/s/vqv1vqnvgc19twx/tensorflow-1.6.0rc0-cp35-cp35m-linux_x86_64.whl
 
 ENV LD_LIBRARY_PATH /usr/local/cuda/extras/CUPTI/lib64:$LD_LIBRARY_PATH
 
